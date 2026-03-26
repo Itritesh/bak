@@ -11,6 +11,9 @@ const PRODUCTS = [
   { id: '6', name: 'Shrewsbury cookies', price: 200, description: 'The legendary buttery delight from the heart of Pune.', category: 'Cookies', color: '#F5DEB3', modelType: 'cookie' },
 ];
 
+/* ==================== CONFIG ==================== */
+const BACKEND_URL = 'https://bak-backend-production-aca3.up.railway.app';
+
 /* ==================== CART ==================== */
 const Cart = {
   items: JSON.parse(localStorage.getItem('bakery-cart') || '[]'),
@@ -815,7 +818,7 @@ async function handlePayment(e) {
 
     // Fetch Razorpay config
     showToast('Initializing payment...', 'info');
-    const configResponse = await fetch('/api/config');
+    const configResponse = await fetch(`${BACKEND_URL}/api/config`);
     if (!configResponse.ok) {
       const configError = await configResponse.json().catch(() => ({}));
       throw new Error(configError.error || 'Payment configuration failed');
@@ -823,7 +826,7 @@ async function handlePayment(e) {
     const { razorpayKeyId } = await configResponse.json();
 
     // Create order
-    const orderResponse = await fetch('/api/create-order', {
+    const orderResponse = await fetch(`${BACKEND_URL}/api/create-order`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount: total }),
@@ -858,7 +861,7 @@ async function handlePayment(e) {
         try {
           showToast('Verifying payment...', 'info');
 
-          const verifyResponse = await fetch('/api/verify-payment', {
+          const verifyResponse = await fetch(`${BACKEND_URL}/api/verify-payment`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(response),
